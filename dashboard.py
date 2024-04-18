@@ -11,6 +11,7 @@ from cassandra.cluster import Cluster
 
 class HDBResaleDashboardApp:
     def __init__(self):
+        # I need to offload this
         with open('MasterPlan2019PlanningAreaBoundaryNoSea.geojson', 'r', encoding="utf-8") as f:
             self.geojson_data = json.load(f)
 
