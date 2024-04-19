@@ -2,4 +2,7 @@
 *.csv
 
 env/
-test/
+wsl-env/
+tests/
+
+__pycache__
