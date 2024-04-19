@@ -1,0 +1,81 @@
+
+CREATE KEYSPACE catalog WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy','DC1' : 3};
+
+USE catalog;
+
+CREATE TABLE resale_data (
+	transaction_id bigint,
+	month date,
+	town text,
+	flat_type text,
+	block text,
+	street_name text,
+	storey_range text,
+	floor_area_sqm decimal,
+	flat_model text,
+	lease_commence_date int,
+	remaining_lease text,
+	resale_price float,
+	PRIMARY KEY ((month, town, flat_type, storey_range), transaction_id)
+) WITH CLUSTERING ORDER BY (transaction_id DESC);
+
+CREATE TABLE planning_areas (
+    name text,
+    PRIMARY KEY (name)
+);
+
+INSERT INTO planning_area (name) VALUES ('BEDOK'); 
+INSERT INTO planning_area (name) VALUES ('BOON LAY'); 
+INSERT INTO planning_area (name) VALUES ('BUKIT BATOK'); 
+INSERT INTO planning_area (name) VALUES ('BUKIT MERAH'); 
+INSERT INTO planning_area (name) VALUES ('BUKIT PANJANG'); 
+INSERT INTO planning_area (name) VALUES ('BUKIT TIMAH'); 
+INSERT INTO planning_area (name) VALUES ('CENTRAL WATER CATCHMENT'); 
+INSERT INTO planning_area (name) VALUES ('CHANGI'); 
+INSERT INTO planning_area (name) VALUES ('CHOA CHU KANG'); 
+INSERT INTO planning_area (name) VALUES ('CLEMENTI'); 
+INSERT INTO planning_area (name) VALUES ('HOUGANG'); 
+INSERT INTO planning_area (name) VALUES ('JURONG EAST'); 
+INSERT INTO planning_area (name) VALUES ('JURONG WEST'); 
+INSERT INTO planning_area (name) VALUES ('PASIR RIS'); 
+INSERT INTO planning_area (name) VALUES ('PIONEER'); 
+INSERT INTO planning_area (name) VALUES ('PUNGGOL'); 
+INSERT INTO planning_area (name) VALUES ('QUEENSTOWN'); 
+INSERT INTO planning_area (name) VALUES ('SELETAR'); 
+INSERT INTO planning_area (name) VALUES ('SEMBAWANG'); 
+INSERT INTO planning_area (name) VALUES ('SENGKANG'); 
+INSERT INTO planning_area (name) VALUES ('SERANGOON'); 
+INSERT INTO planning_area (name) VALUES ('KALLANG'); 
+INSERT INTO planning_area (name) VALUES ('LIM CHU KANG'); 
+INSERT INTO planning_area (name) VALUES ('NORTH-EASTERN ISLANDS'); 
+INSERT INTO planning_area (name) VALUES ('NOVENA'); 
+INSERT INTO planning_area (name) VALUES ('SIMPANG'); 
+INSERT INTO planning_area (name) VALUES ('SOUTHERN ISLANDS'); 
+INSERT INTO planning_area (name) VALUES ('SUNGEI KADUT'); 
+INSERT INTO planning_area (name) VALUES ('TOA PAYOH'); 
+INSERT INTO planning_area (name) VALUES ('TUAS'); 
+INSERT INTO planning_area (name) VALUES ('WESTERN ISLANDS'); 
+INSERT INTO planning_area (name) VALUES ('WESTERN WATER CATCHMENT'); 
+INSERT INTO planning_area (name) VALUES ('WOODLANDS'); 
+INSERT INTO planning_area (name) VALUES ('RIVER VALLEY'); 
+INSERT INTO planning_area (name) VALUES ('ROCHOR'); 
+INSERT INTO planning_area (name) VALUES ('SINGAPORE RIVER'); 
+INSERT INTO planning_area (name) VALUES ('STRAITS VIEW'); 
+INSERT INTO planning_area (name) VALUES ('CHANGI BAY'); 
+INSERT INTO planning_area (name) VALUES ('MARINE PARADE'); 
+INSERT INTO planning_area (name) VALUES ('DOWNTOWN CORE'); 
+INSERT INTO planning_area (name) VALUES ('MARINA EAST'); 
+INSERT INTO planning_area (name) VALUES ('MARINA SOUTH'); 
+INSERT INTO planning_area (name) VALUES ('MUSEUM'); 
+INSERT INTO planning_area (name) VALUES ('NEWTON'); 
+INSERT INTO planning_area (name) VALUES ('ORCHARD'); 
+INSERT INTO planning_area (name) VALUES ('OUTRAM'); 
+INSERT INTO planning_area (name) VALUES ('TAMPINES'); 
+INSERT INTO planning_area (name) VALUES ('TANGLIN'); 
+INSERT INTO planning_area (name) VALUES ('TENGAH'); 
+INSERT INTO planning_area (name) VALUES ('MANDAI'); 
+INSERT INTO planning_area (name) VALUES ('BISHAN'); 
+INSERT INTO planning_area (name) VALUES ('ANG MO KIO'); 
+INSERT INTO planning_area (name) VALUES ('GEYLANG'); 
+INSERT INTO planning_area (name) VALUES ('PAYA LEBAR'); 
+INSERT INTO planning_area (name) VALUES ('YISHUN');
