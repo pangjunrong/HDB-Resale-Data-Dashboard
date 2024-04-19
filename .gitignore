@@ -1,5 +1,8 @@
 *.conf
 *.csv
 
+wsl-env/
 env/
-test/
+tests/
+
+__pycache__

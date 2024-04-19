@@ -9,7 +9,7 @@ class HDBResaleDataBulkUpload():
         self.spark = SparkSession.builder \
             .appName("HDBResaleDataBulkUpload") \
             .config("spark.jars.packages", "com.datastax.spark:spark-cassandra-connector_2.12:3.2.0") \
-            .config("spark.cassandra.connection.host", "localhost") \
+            .config("spark.cassandra.connection.host", "172.20.0.2") \
             .config("spark.cassandra.connection.port", "9042") \
             .getOrCreate()
         

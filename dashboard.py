@@ -9,6 +9,10 @@ import datetime
 import configparser
 from cassandra.cluster import Cluster
 
+import transformers
+from infer import infer
+import torch
+
 class HDBResaleDashboardApp:
     def __init__(self):
         # I need to offload this
@@ -73,6 +77,20 @@ class HDBResaleDashboardApp:
         def fetch_planning_areas():
             return pd.DataFrame(self.session.execute("SELECT * FROM planning_areas")._current_rows)
         self.planning_areas = fetch_planning_areas().astype(str)
+
+        @st.cache_resource
+        def load_llm():
+            model_name = "pipizhao/Pandalyst-7B-V1.2"
+            model = transformers.AutoModelForCausalLM.from_pretrained(
+                model_name,
+                device_map = "cuda",
+                torch_dtype=torch.bfloat16)
+
+            tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+            
+            return model, tokenizer
+        
+        self.llm_model, self.llm_tokenizer = load_llm()
 
         with st.sidebar:
             st.title('🏙️ HDB Resale Flats Dashboard')
@@ -199,6 +217,8 @@ class HDBResaleDashboardApp:
                 return choropleth
             
             with col[1]:
+                self.df_period['resale_price'] = self.df_period['resale_price'].astype(float).astype(int)
+
                 choropleth = make_choropleth(self, self.df_transactions, self.geojson_data)
                 st.plotly_chart(choropleth, use_container_width=True)
 
@@ -206,6 +226,24 @@ class HDBResaleDashboardApp:
                 self.df_period['month'] = pd.to_datetime(self.df_period['month'])
                 self.df_period.month = self.df_period.month.dt.strftime('%B %Y')
                 st.dataframe(self.df_period.sort_values(by='transaction_id', ascending=False)[:100], hide_index=True)
+
+                messages = st.container(height=300)
+                if prompt := st.chat_input("You can ask me about the most recent transactions!"):
+                    messages.chat_message("user").write(prompt)
+                    messages.chat_message("assistant").write(f"Please allow me some time to think about it... I am running on a single RTX3080 😔")
+                    import time
+                    start_time = time.time()
+                    answer, function_code = infer(self.df_period.sort_values(by='transaction_id', ascending=False)[:100],
+                        question=prompt,
+                        model=self.llm_model,
+                        tokenizer=self.llm_tokenizer,
+                        df_name="HDB Resale Data",
+                        df_description="The transactions for HDB Resale Flats",
+                        try_n = 1)
+                    end_time = time.time()
+                    elapsed_time = end_time - start_time
+                    messages.chat_message("assistant").write(f"{answer}")
+                    messages.chat_message("assistant").write(f"If you're curious, I took {elapsed_time} seconds to run. Is there anything else?")
 
             with col[2]:
                 st.markdown('#### Highest No. of Transactions')
@@ -230,8 +268,8 @@ class HDBResaleDashboardApp:
                 with st.expander('About', expanded=True):
                     st.write('''
                         - Data: [Housing & Dev. Board](<https://beta.data.gov.sg/collections/189/datasets/d_ebc5ab87086db484f88045b47411ebc5/view>).
-                        - :orange[**Gains/Losses**]: states with high inbound/ outbound migration for selected year
-                        - :orange[**States Migration**]: percentage of states with annual inbound/ outbound migration > 50,000
+                        - :orange[**Biggest Gains/Losses**]: shows towns with the biggest change in transactions compared to the previous period (and smallest if there are no negative deltas)
+                        - :orange[**Recent Transactions**]: displays the most recent 100 transactions recorded by HDB
                         ''')
 
 if __name__ == "__main__":
